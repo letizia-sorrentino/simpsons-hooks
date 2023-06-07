@@ -1,0 +1,16 @@
+.controls {
+  margin: 10px;
+}
+
+.liked {
+  width: 250px;
+}
+
+.notLiked {
+  width: 150px;
+}
+
+.characterContainer {
+  display: flex;
+  background-color: cadetblue;
+}
