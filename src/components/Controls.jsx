@@ -1,9 +1,9 @@
 const Controls = (props) => {
-    const { onSearchInput, onLikeInput, SearchInput } = props;
+    const { onSearchInput, onLikeInput, searchInput, errors } = props;
     return (
       <>
-        <input className="controls" value={SearchInput.name} onInput={onSearchInput} type="text" />
-        <p>{errors && errors.name}</p>
+        <input className="controls" value={searchInput} onInput={onSearchInput} type="text" />
+        <p>{errors}</p>
         <select onInput={onLikeInput}>
           <option value=""></option>
           <option value="liked">Liked</option>

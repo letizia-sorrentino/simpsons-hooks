@@ -10,7 +10,7 @@ import "./App.css";
 const App = () => {
   //state hooks
   const [simpsons, setSimpsons] = useState();
-  const [searchInput, setSearchInput] = useState({ name: "" });
+  const [searchInput, setSearchInput] = useState("");
   const [likeInput, setLikeInput] = useState("");
   const [errors, setErrors] = useState(null); // null means no error
 
@@ -62,12 +62,12 @@ const App = () => {
   };
 
   //Search box
-  const onSearchInput = async (e) => {
-    setSearchInput({ [e.target.id]: e.target.value });
+    const onSearchInput = async (e) => {
+      setSearchInput(e.target.value);
 
     //validate
     //define schema
-    const schema = { name: joi.string().alphanum().min(3).max(30).required() };
+    const schema = { searchInput: joi.string().alphanum().min(3).max(30).required() };
 
     //call joi
     const r = joi.object(schema);
@@ -82,6 +82,7 @@ const App = () => {
       setErrors(errorsMod);
     }
   };
+
 
   //sort by like
   const onLikeInput = (e) => {
