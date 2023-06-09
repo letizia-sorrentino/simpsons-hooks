@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
+import joi from "joi";
 import Loading from "./components/Loading";
 import Controls from "./components/Controls";
 import Simpsons from "./components/Simpsons";
@@ -9,11 +10,12 @@ import "./App.css";
 const App = () => {
   //state hooks
   const [simpsons, setSimpsons] = useState();
-  const [searchInput, setSearchInput] = useState("");
+  const [searchInput, setSearchInput] = useState({ name: "" });
   const [likeInput, setLikeInput] = useState("");
+  const [errors, setErrors] = useState(null); // null means no error
 
-  //get data from API
-  const getData = async () => {
+  //Add useCallback to the getData function
+  const getData = useCallback(async () => {
     try {
       const { data } = await axios.get(
         `https://thesimpsonsquoteapi.glitch.me/quotes?count=10`
@@ -25,15 +27,15 @@ const App = () => {
       });
 
       setSimpsons(data);
-      console.log(simpsons);
+      console.log(data);
     } catch (error) {
       console.log(error);
     }
-  };
+  }, []);
 
   useEffect(() => {
     getData();
-  }, []); //[] means it runs once
+  }, [getData]);
 
   // Function to update the character to toggle between like/dislike
   const onLikeToggle = (id) => {
@@ -60,8 +62,25 @@ const App = () => {
   };
 
   //Search box
-  const onSearchInput = (e) => {
-    setSearchInput(e.target.value);
+  const onSearchInput = async (e) => {
+    setSearchInput({ [e.target.id]: e.target.value });
+
+    //validate
+    //define schema
+    const schema = { name: joi.string().alphanum().min(3).max(30).required() };
+
+    //call joi
+    const r = joi.object(schema);
+    try {
+      const results = await r.validateAsync(searchInput);
+    } catch (errors) {
+      const errorsMod = {};
+      errors.details.forEach((error) => {
+        errorsMod[error.context.key] = error.message;
+      });
+      //console.log(errors.Mod);
+      setErrors(errorsMod);
+    }
   };
 
   //sort by like
@@ -87,7 +106,6 @@ const App = () => {
   //filtered by search
   if (searchInput) {
     filteredList = filteredList.filter((char) => {
-      //console.log(char.character, searchInput);
       if (char.character.toLowerCase().includes(searchInput.toLowerCase()))
         return true;
     });
